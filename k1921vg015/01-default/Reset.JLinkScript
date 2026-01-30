@@ -1,0 +1,7 @@
+int InitTarget(void)
+{
+  int r;
+  r = JLINK_JTAG_SetDeviceId(0, 0x00000D5B);
+  r = JLINK_CORESIGHT_Configure("IRPre=0;DRPre=0;IRPost=0;DRPost=0;IRLenDevice=0");
+  return r;
+}
