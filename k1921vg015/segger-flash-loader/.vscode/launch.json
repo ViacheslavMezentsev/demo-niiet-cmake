@@ -1,0 +1,72 @@
+{
+    "configurations" :
+    [
+      {
+        "name" : "Debug (gdb/jlink)",
+        "cwd" : "${workspaceRoot}",
+        "executable" : "${config:executable}",
+        "interface": "jtag",
+        "request" : "launch",
+        "type" : "cortex-debug",
+        "servertype" : "jlink",
+        "device" : "${config:device}",
+        "preLaunchTask" : "CMake: build",
+        //"preRestartCommands" : [ "load", "enable breakpoint", "monitor halt" ],
+        // Опционально: можно переопределить поведение сброса, чтобы он не портил регистры
+        "overrideLaunchCommands": [
+            "monitor halt",
+            "monitor reset",
+            "load", // Загружаем прошивку
+            //"set $pc = 0x40000000", // Ставим PC СРАЗУ ПОСЛЕ загрузки
+            "monitor exec SetRTTSearchRanges 0x40000000 0x40000",
+            "monitor exec SetRTTAddr &_SEGGER_RTT"
+        ],
+        "runToEntryPoint" : "Init",
+        //"showDevDebugOutput" : "raw",
+        "svdFile" : "${config:svdFile}",
+        "liveWatch": { "enabled": false, "samplesPerSecond": 2 },
+        "rttConfig": { "enabled": false, "address": "auto", "decoders": [ { "label": "RTT(0)", "port": 0, "timestamp": true, "type": "console" } ] }
+      },
+      {
+        "name" : "Debug (ocd/jlink)",
+        "cwd" : "${workspaceRoot}",
+        "executable" : "${config:executable}",
+        "interface": "jtag",
+        "request" : "launch",
+        "type" : "cortex-debug",
+        "servertype" : "openocd",
+        "device" : "${config:device}",
+        "preLaunchTask" : "CMake: build",
+        //"preRestartCommands" : [ "load", "enable breakpoint", "monitor halt" ],
+        // Опционально: можно переопределить поведение сброса, чтобы он не портил регистры
+        "overrideLaunchCommands": [
+            "monitor halt",
+            "monitor reset",
+            "load", // Загружаем прошивку
+        ],
+        "runToEntryPoint" : "main",
+        //"showDevDebugOutput" : "raw",
+        "svdFile" : "${config:svdFile}",
+        "configFiles": [ "interface/jlink.cfg", "target/${config:targetFamily}.cfg" ],
+        "liveWatch": { "enabled": false, "samplesPerSecond": 2 },
+      },
+      {
+        "name" : "Debug (ocd/blueprog)",
+        "cwd" : "${workspaceRoot}",
+        "executable" : "${config:executable}",
+        "interface": "jtag",
+        "request" : "launch",
+        "type" : "cortex-debug",
+        "servertype" : "openocd",
+        "device" : "${config:device}",
+        "preLaunchTask" : "CMake: build",
+        "preRestartCommands" : [ "load", "enable breakpoint", "monitor reset halt" ],
+        "runToEntryPoint" : "main",
+        //"showDevDebugOutput" : "raw",
+        "svdFile" : "${config:svdFile}",
+        "configFiles": [ "interface/ftdi/blueprog.cfg", "target/${config:targetFamily}.cfg" ],
+        "liveWatch": { "enabled": false, "samplesPerSecond": 2 },
+      },
+    ],
+    "version" : "0.2.0"
+  }

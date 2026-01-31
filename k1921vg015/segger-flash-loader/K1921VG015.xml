@@ -1,0 +1,6 @@
+<Database>
+  <Device>
+    <ChipInfo Vendor="NIIET" Name="K1921VG015" Core="JLINK_CORE_RV32" WorkRAMAddr="0x40000000" WorkRAMSize="0x8000" JLinkScriptFile="K1921VG015.jlinkscript"/>
+    <FlashBankInfo Name="Internal Flash" BaseAddr="0x80000000" MaxSize="0x00100000" Loader="loader.elf" LoaderType="FLASH_ALGO_TYPE_OPEN" />
+  </Device>
+</Database>
