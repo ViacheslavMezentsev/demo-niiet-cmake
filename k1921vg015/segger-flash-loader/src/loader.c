@@ -5,6 +5,7 @@
  */
 #include "K1921VG015.h"
 #include "system_k1921vg015.h"
+#include "mtimer.h"
 #include "FlashOS.h"
 
 /* Магический ключ для доступа к регистру CMD (см. PDF стр. 2) */
@@ -27,18 +28,6 @@ SECTION_PRGCODE static void _WaitBusy( void )
     {
         // Можно добавить сброс Watchdog, если он активен
     }
-}
-
-
-/**
- * @brief  Короткая задержка.
- *         Необходима после записи в регистр CMD, чтобы флаг BUSY успел взвестись.
- */
-SECTION_PRGCODE static void _ShortDelay( void )
-{
-    // В UART-примере используется цикл до 5.
-    // volatile гарантирует, что компилятор не вырежет этот цикл.
-    for ( volatile int i = 0; i < 10; i++ );
 }
 
 
@@ -115,7 +104,8 @@ SECTION_PRGCODE int EraseSector( uint32_t SectorAddr )
     FLASH->CMD = ( FLASH_CMD_KEY_ACCESS << FLASH_CMD_KEY_Pos ) | FLASH_CMD_ERSEC_Msk;
 
     // 4. Даем время аппаратуре взвести флаг BUSY
-    _ShortDelay();
+    //_ShortDelay();
+    usleep(1);
 
     // 5. Ждем завершения операции
     _WaitBusy();
@@ -169,7 +159,8 @@ SECTION_PRGCODE int ProgramPage( uint32_t DestAddr, uint32_t NumBytes, uint8_t* 
         FLASH->CMD = ( FLASH_CMD_KEY_ACCESS << FLASH_CMD_KEY_Pos ) | FLASH_CMD_WR_Msk;
 
         // 5. Даем время аппаратуре взвести флаг BUSY
-        _ShortDelay();
+        //_ShortDelay();
+        usleep(1);
 
         // 6. Ждем завершения записи блока
         _WaitBusy();
@@ -198,14 +189,13 @@ SECTION_DEVDSCR const DeviceInfo FlashDevice =
     ONCHIP,                    // Тип (1 = On-chip Flash)
     MEM_FLASH_BASE,            // Базовый адрес: 0x80000000
     MEM_FLASH_SIZE,            // Полный размер: 1 МБ (0x100000)
-    MEM_FLASH_BUS_WIDTH_WORDS, // Размер страницы программирования: 16 байт
+    MEM_FLASH_PAGE_TOTAL,      // Размер страницы программирования
     0,                         // Зарезервировано
     0xFF,                      // Значение стертой ячейки
-    100,                       // Таймаут записи страницы (мс)
-    3000,                      // Таймаут стирания сектора (мс)
+    4,                         // Таймаут записи страницы (мс)
+    400,                       // Таймаут стирания сектора (мс)
     // Карта секторов
     {
-
         { MEM_FLASH_PAGE_SIZE, 0x00000000 },    // Сектора по 4 КБ (MEM_FLASH_PAGE_SIZE = 4096)
         { 0xFFFFFFFF, 0xFFFFFFFF }              // Маркер конца таблицы
     }

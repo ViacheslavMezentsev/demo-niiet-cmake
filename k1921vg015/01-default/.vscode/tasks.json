@@ -16,7 +16,7 @@
       "command": "cmd",
       "args": [
         "/C",
-        "((echo device ${config:device} & echo si SWD & echo speed 4000 & echo r & echo h & echo q) > flash.jlink) && (JLink.exe -nogui 1 -CommandFile flash.jlink) 1> nul && echo \"Успешно\" || echo \"Ошибка\""
+        "((echo device ${config:device} & echo si jtag & echo speed 4000 & echo r & echo h & echo q) > flash.jlink) && (JLink.exe -nogui 1 -CommandFile flash.jlink) 1> nul && echo \"Успешно\" || echo \"Ошибка\""
       ],
       "options": { "cwd": "${workspaceFolder}/build" },
       "group": "build",
@@ -28,7 +28,7 @@
       "command": "cmd",
       "args": [
         "/C",
-        "((echo r & echo h & echo erase & echo q) > flash.jlink) && (JLink.exe -device ${config:device} -if swd -speed 4000 -nogui 1 -CommandFile flash.jlink) 1> nul && echo \"Успешно\" || echo \"Ошибка\""
+        "((echo r & echo h & echo erase & echo q) > flash.jlink) && (JLink.exe -device ${config:device} -if jtag -speed 4000 -nogui 1 -CommandFile flash.jlink) 1> nul && echo \"Успешно\" || echo \"Ошибка\""
       ],
       "options": { "cwd": "${workspaceFolder}/build" },
       "group": "build",
@@ -40,7 +40,7 @@
       "command": "cmd",
       "args": [
         "/C",
-        "((echo r & echo h & echo loadfile ${command:cmake.buildType}/${workspaceFolderBasename}.hex & echo q) > flash.jlink) && (JLink.exe -device ${config:device} -if swd -speed 4000 -nogui 1 -CommandFile flash.jlink) 1> nul && echo \"Успешно\" || echo \"Ошибка\""
+        "((echo r & echo h & echo loadfile ${command:cmake.buildType}/${workspaceFolderBasename}.hex & echo q) > flash.jlink) && (JLink.exe -device ${config:device} -if jtag -speed 4000 -nogui 1 -CommandFile flash.jlink) 1> nul && echo \"Успешно\" || echo \"Ошибка\""
       ],
       "options": { "cwd": "${workspaceFolder}/build" },
       "group": "build",
@@ -52,7 +52,7 @@
       "command": "cmd",
       "args": [
         "/C",
-        "((echo h & echo r & echo п & echo q) > flash.jlink) && (JLink.exe -device ${config:device} -if swd -speed 4000 -nogui 1 -usb ${config:jlink-id} -CommandFile flash.jlink) 1> nul && echo \"Успешно\" || echo \"Ошибка\""
+        "((echo h & echo r & echo п & echo q) > flash.jlink) && (JLink.exe -device ${config:device} -if jtag -speed 4000 -nogui 1 -usb ${config:jlink-id} -CommandFile flash.jlink) 1> nul && echo \"Успешно\" || echo \"Ошибка\""
       ],
       "options": { "cwd": "${workspaceFolder}/build" },
       "group": "build",
