@@ -53,8 +53,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     HSECLK_VAL=16000000
     SYSCLK_PLL
     CKO_PLL0
-#    RETARGET
-#    $<$<CONFIG:RELEASE>:PRINTF_LEVEL=1>
 )
 
 # Подключение библиотек.

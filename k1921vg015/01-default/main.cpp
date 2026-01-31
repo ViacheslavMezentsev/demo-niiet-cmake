@@ -32,7 +32,7 @@ int main( void )
     // Мигаем светодиодом на плате.
     while ( 1 )
     {
-        sleep( 500 ); // мс
+        sleep( 100 ); // мс
 
         GPIOC->DATAOUTTGL |= ( 1 << 0 );
     }

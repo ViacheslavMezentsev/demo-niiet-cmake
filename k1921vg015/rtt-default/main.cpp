@@ -11,7 +11,6 @@ extern "C" {
 #define println(s)                      print( s "\n" )
 #define printf( format, ... )           SEGGER_RTT_printf( 0, ( const char * ) ( format ), ##__VA_ARGS__ ); sleep(1)
 
-
 /**
  * @brief   Выполняет тестирование RTT.
  *
