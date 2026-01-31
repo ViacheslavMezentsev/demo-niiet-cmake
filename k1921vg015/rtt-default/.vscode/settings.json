@@ -19,9 +19,9 @@
     "cortex-debug.JLinkGDBServerPath.linux": "JLinkGDBServerCLExe",
     // Настройки проекта.
     "executable": "${command:cmake.buildDirectory}/${workspaceFolderBasename}.elf",
-    "device": "BM-310", //"RISC-V", "SCR1-RV32"
+    "device": "K1921VG015", // "BM-310", "RISC-V", "SCR1-RV32"
     "svdFile" : "${workspaceRoot}/tools/svd/K1921VG015.svd",
-    "targetFamily": "k1921vg015",
+    //"targetFamily": "k1921vg015",
     //"jlink-id": "nucleo-f030", //-usb ${config:jlink-id},
     "toolchain": "${env:USERPROFILE}/xpack-riscv-none-elf-gcc-13.3.0-2",
     //"toolchain": "${env:HOME}/xpack-riscv-none-elf-gcc-13.2.0-2"

@@ -5,13 +5,16 @@ extern "C" {
 }
 #include "version.h"
 
-
+/**
+ * @brief   Точка входа в программу.
+ *
+ */
 int main( void )
 {
     // Инициализация системы.
     SystemInit();
 
-    // Обновление системной частоты.
+    // Настройка тактирования.
     SystemCoreClockUpdate();
 
     // Включаем глобальные прерывания.
@@ -29,7 +32,7 @@ int main( void )
     // Мигаем светодиодом на плате.
     while ( 1 )
     {
-        sleep( 500 ); // мс
+        sleep( 100 ); // мс
 
         GPIOC->DATAOUTTGL |= ( 1 << 0 );
     }

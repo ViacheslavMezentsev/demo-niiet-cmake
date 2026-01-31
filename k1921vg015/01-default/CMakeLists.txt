@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.19)
 # Указываем файл тулчейна
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/gcc-riscv-none-elf.cmake)
 
-# Стандарт C/C++
+# Стандарт C/C++.
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
 
@@ -14,9 +14,7 @@ set(PROJECT_NAME ${BASE_FOLDER})
 
 project(${PROJECT_NAME} C CXX ASM)
 
-# ==============================================================================
-# 1. ГЛОБАЛЬНЫЕ ОПЦИИ (ДО всего остального)
-# ==============================================================================
+# Глобальные настройки для всего проекта.
 add_compile_options(
     -march=rv32imfc_zba_zbb_zbc_zbs_zicsr
     -mabi=ilp32f
@@ -29,6 +27,7 @@ add_compile_options(
     -Wall
 )
 
+# Настройки линковщика.
 add_link_options(
     --specs=nosys.specs
     -march=rv32imfc_zba_zbb_zbc_zbs_zicsr
@@ -46,41 +45,32 @@ add_link_options(
     -Wl,--end-group
 )
 
-# ==============================================================================
-# 2. СОЗДАНИЕ ИСПОЛНЯЕМОГО ФАЙЛА
-# ==============================================================================
+# Создание артефактов сборки.
 add_executable(${PROJECT_NAME} main.cpp)
 
-# Определения препроцессора
+# Определения препроцессора.
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     HSECLK_VAL=16000000
     SYSCLK_PLL
     CKO_PLL0
-#    RETARGET
-#    $<$<CONFIG:RELEASE>:PRINTF_LEVEL=1>
 )
 
-# ==============================================================================
-# 3. ПОДКЛЮЧЕНИЕ ПОДКАТАЛОГОВ
-# ==============================================================================
+# Подключение библиотек.
 add_subdirectory(platform)
 
-# ==============================================================================
-# 4. ЛИНКОВКА
-# ==============================================================================
 target_link_libraries(${PROJECT_NAME}
     NIIET::NoSys
     NIIET::Nano
 )
 
+# Подключение директорий с заголовочными файлами.
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-# ==============================================================================
-# 5. ФИНАЛЬНЫЕ НАСТРОЙКИ ЛИНКОВЩИКА
-# ==============================================================================
-#set(LINKER_SCRIPT "k1921vg015_flash.ld")
-set(LINKER_SCRIPT "k1921vg015_ram.ld")
+# Конфигурационный файл линковщика.
+set(LINKER_SCRIPT "k1921vg015_flash.ld")
+#set(LINKER_SCRIPT "k1921vg015_ram.ld")
 
+# Опции линковщика.
 target_link_options(${PROJECT_NAME} PRIVATE
     -L${CMAKE_CURRENT_SOURCE_DIR}/platform/Device/K1921VG015/ldscripts/
     -T${LINKER_SCRIPT}
@@ -89,9 +79,7 @@ target_link_options(${PROJECT_NAME} PRIVATE
     -Wl,--defsym=end=_end
 )
 
-# ==============================================================================
-# 6. ГЕНЕРАЦИЯ АРТЕФАКТОВ
-# ==============================================================================
+# Артефакты сборки.
 niiet_generate_binary_file(${PROJECT_NAME})
 niiet_generate_hex_file(${PROJECT_NAME})
 niiet_generate_lss_file(${PROJECT_NAME})
