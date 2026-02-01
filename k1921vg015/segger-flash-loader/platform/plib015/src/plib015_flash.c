@@ -80,7 +80,7 @@ void FLASH_ReadData(uint32_t AddrVal, uint32_t* DataArr, FLASH_Region_TypeDef Re
     __NOP5();
     while (FLASH_BusyStatus()) {
     };
-    for (uint32_t i = 0; i < MEM_FLASH_BUS_WIDTH_WORDS; i++) {
+    for (uint32_t i = 0; i < MEM_FLASH_BUS_WIDTH_WORDS/sizeof(uint32_t); i++) {
         DataArr[i] = FLASH_GetData(i);
     }
 }
@@ -88,7 +88,7 @@ void FLASH_ReadData(uint32_t AddrVal, uint32_t* DataArr, FLASH_Region_TypeDef Re
 /**
   * @brief   Запись информации в выбранную область флеш, начиная с указанного адреса
   * @param   AddrVal  Стартовый адрес
-  * @param   DataArr  Указатель на массив, из которого будут взяты 2 32-битных слова данных
+  * @param   DataArr  Указатель на массив, из которого будут взяты 4 элемента
   * @param   Region  Выбор области
   * @retval  void
   */
@@ -101,7 +101,7 @@ void FLASH_WriteData(uint32_t AddrVal, uint32_t* DataArr, FLASH_Region_TypeDef R
         assert_param(IS_FLASH_NVR_ADDR(AddrVal));
 
     FLASH_SetAddr(AddrVal);
-    for (uint32_t i = 0; i < MEM_FLASH_BUS_WIDTH_WORDS; i++) {
+    for (uint32_t i = 0; i < MEM_FLASH_BUS_WIDTH_WORDS/sizeof(uint32_t); i++) {
         FLASH_SetData(i, DataArr[i]);
     }
     FLASH_SetCmd(FLASH_Cmd_Write, Region);

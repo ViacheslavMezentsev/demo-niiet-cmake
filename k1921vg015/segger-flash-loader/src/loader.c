@@ -26,8 +26,8 @@
  * @brief  Инициализация (SEGGER_FL_Prepare).
  *         Вызывается J-Link перед началом любых операций с Flash.
  *
- * @param  Addr: Базовый адрес (0x80000000).
- * @param  Freq: Частота ядра в кГц (информативно).
+ * @param  Addr: Базовый адрес.
+ * @param  Freq: Частота.
  * @param  Func: Тип операции (1-Erase, 2-Program, 3-Verify).
  * @return 0 - Успех.
  */
@@ -75,14 +75,14 @@ SECTION_PRGCODE int EraseSector( uint32_t SectorAddr, uint32_t SectorIndex, uint
     ( void ) NumSectors;
     ( void ) SectorIndex;
 
-    // Записываем адрес сектора в регистр ADDR.
-    FLASH->ADDR = SectorAddr;
+    // Записываем адрес сектора.
+    FLASH_SetAddr( SectorAddr );
 
     // Отправляем команду стирания сектора.
-    FLASH->CMD = ( FLASH_CMD_KEY_Access << FLASH_CMD_KEY_Pos ) | FLASH_CMD_ERSEC_Msk;
+    FLASH_SetCmd( FLASH_CMD_ERSEC_Msk, FLASH_Region_Main );
 
     // Даем время аппаратуре взвести флаг BUSY.
-    usleep(1);
+    __NOP5();
 
     // Ждём завершения операции.
     while ( FLASH_BusyStatus() ) {}
@@ -109,12 +109,12 @@ SECTION_PRGCODE int ProgramPage( uint32_t DestAddr, uint32_t NumBytes, uint8_t* 
     while ( NumBytes >= MEM_FLASH_BUS_WIDTH_WORDS )
     {
         // Устанавливаем адрес.
-        FLASH->ADDR = DestAddr;
+        FLASH_SetAddr( DestAddr );
 
         // Заполняем 4 регистра данных (DATA[0]..DATA[3]).
         // Внимание: pSrcBuff может быть не выровнен на 4 байта,
         // поэтому собираем uint32_t вручную побайтно (Little Endian).
-        for ( int i = 0; i < 4; i++ )
+        for ( int i = 0; i < MEM_FLASH_BUS_WIDTH_WORDS / sizeof( uint32_t ); i++ )
         {
             uint32_t val = 0;
 
@@ -123,13 +123,13 @@ SECTION_PRGCODE int ProgramPage( uint32_t DestAddr, uint32_t NumBytes, uint8_t* 
             val |= ( uint32_t ) pSrcBuff[2] << 16;
             val |= ( uint32_t ) pSrcBuff[3] << 24;
 
-            FLASH->DATA[i].DATA = val;
+            FLASH_SetData( i, val );
 
             pSrcBuff += 4;
         }
 
         // Отправляем команду записи.
-        FLASH->CMD = ( FLASH_CMD_KEY_Access << FLASH_CMD_KEY_Pos ) | FLASH_CMD_WR_Msk;
+        FLASH_SetCmd( FLASH_Cmd_Write, FLASH_Region_Main );
 
         // Даем время аппаратуре взвести флаг BUSY.
         __NOP5();
@@ -173,10 +173,10 @@ SECTION_DEVDSCR const DeviceInfo FlashDevice =
     ONCHIP,                    // Тип (1 = On-chip Flash)
     MEM_FLASH_BASE,            // Базовый адрес: 0x80000000
     MEM_FLASH_SIZE,            // Полный размер: 1 МБ (0x100000)
-    1024,                      // Размер страницы программирования
+    2048,                      // Размер страницы программирования
     0,                         // Зарезервировано
     0xFF,                      // Значение стертой ячейки
-    4,                         // Таймаут записи страницы (мс)
+    20,                        // Таймаут записи страницы (мс)
     400,                       // Таймаут стирания сектора (мс)
     // Карта секторов
     {
